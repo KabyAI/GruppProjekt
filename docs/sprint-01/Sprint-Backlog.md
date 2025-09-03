@@ -85,4 +85,23 @@ Fokus ligger på att välja källor med olika uppdateringsfrekvens (dagligen, ve
 - **Veckovisa uppdateringar:** Vissa Data.gov- och SCB-dataset, Arbetsförmedlingen prognoser  
 - **Månadsvisa uppdateringar:** Många SCB-dataset, vissa kulturarvsdata (SOCH)  
 
-I nästa sprint väljer vi 1–2 API:er att implementera i vår första ingestion-pipeline.
+
+# Sprint 2 – Backlog
+
+## Sprintmål
+Få igång första pipelinen (API → GCP), träna en baseline-ML-modell, testa deployment i GCP och förtydliga Task 2-kraven med läraren.
+
+## Tasks
+- [ ] Ingestion-service (Python+Docker) → Cloud Run + Cloud Scheduler.
+- [ ] Spara data i GCS/BigQuery, enkel transform.
+- [ ] Träna och spara baseline-ML-modell.
+- [ ] Testa Cloud Run + FastAPI (alt. Vertex AI jämförelse).
+- [ ] Lägg till CI/CD-workflow i GitHub.
+- [ ] Dokumentera sprinten i `docs/sprint-01/`.
+
+## Definition of Done
+- Pipeline schemalagd och körbar.
+- Första ML-modell tränad.
+- Target/problem dokumenterat.
+- Minst en service deployas via CI/CD.
+- **Lärarens svar dokumenterade och inkorporerade i planeringen.**
