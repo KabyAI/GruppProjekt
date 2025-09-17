@@ -32,3 +32,25 @@ Få igång första pipelinen (API → GCP), träna en baseline-ML-modell, testa 
 - Target/problem dokumenterat.
 - Minst en service deployas via CI/CD.
 - **Lärarens svar dokumenterade och inkorporerade i planeringen.**
+
+
+# Sprint 3 – Backlog
+
+## Sprintmål
+Få in all data i BigQuery, bestämma hur den ska transformeras och förstå kolumnerna för dashboard. Utforska hur ML-modellen ska fungera i GCP samt planera för logging och testing.
+
+## Tasks
+- [ ] Ladda in dataset i BigQuery.  
+- [ ] Definiera schema och transformationssteg.  
+- [ ] Analysera kolumner och koppla till dashboard-design.  
+- [ ] Utforska hur ML-modellen ska köras i GCP och vilka komponenter som behövs.  
+- [ ] Planera logging (Cloud Logging/Monitoring).  
+- [ ] Planera testing för pipelines och ML-modell (CI/CD, pytest).  
+- [ ] Dokumentera sprinten i `docs/sprint-03/`.  
+
+## Definition of Done
+- Data finns i BigQuery.  
+- Transformationsplan och schema är definierade.  
+- Dashboard-design har ett första utkast.  
+- ML-modellens deployment i GCP är undersökt och dokumenterad.  
+- Plan för logging och testing är dokumenterad.  
