@@ -1,1 +1,53 @@
+# Cloud Build configuration for Transformation Pipeline
+# Builds Docker image and deploys to Cloud Run as a scheduled job
 
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/starfish-docker/transform-pipeline:latest'
+      - '-f'
+      - 'transformation/ml-model/Dockerfile'
+      - 'transformation'
+
+  # Step 2: Push the image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/starfish-docker/transform-pipeline:latest'
+
+  # Step 3: Deploy to Cloud Run Job
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run jobs update transform-pipeline \
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/starfish-docker/transform-pipeline:latest \
+          --region=${_REGION} \
+          --service-account=cloud-run-ingest@$PROJECT_ID.iam.gserviceaccount.com \
+          --set-env-vars="PROJECT_ID=$PROJECT_ID,LOCATION=${_REGION}" \
+          --max-retries=1 \
+          --task-timeout=30m \
+          --memory=2Gi \
+          --cpu=1 \
+          || \
+        gcloud run jobs create transform-pipeline \
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/starfish-docker/transform-pipeline:latest \
+          --region=${_REGION} \
+          --service-account=cloud-run-ingest@$PROJECT_ID.iam.gserviceaccount.com \
+          --set-env-vars="PROJECT_ID=$PROJECT_ID,LOCATION=${_REGION}" \
+          --max-retries=1 \
+          --task-timeout=30m \
+          --memory=2Gi \
+          --cpu=1
+
+# Substitution defaults
+substitutions:
+  _REGION: 'europe-north2'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'

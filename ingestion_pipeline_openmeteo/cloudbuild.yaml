@@ -1,13 +1,13 @@
 substitutions:
   _REGION: 'europe-north2'
   _REPO: 'starfish-docker'
-  _JOB_NAME: 'ingest-delphi'
+  _JOB_NAME: 'ingest-openmeteo'
+  _RAW_DATASET: 'raw'
+  _OPENMETEO_TABLE: 'openmeteo_daily_ca'
+  _OPENMETEO_START_DATE: '2022-01-01'
   _IMAGE_TAG: 'latest'
   _PROJECT_ID: 'compact-marker-471008-m0'
   _SERVICE_ACCOUNT: 'cloud-run-ingest@compact-marker-471008-m0.iam.gserviceaccount.com'
-  _RAW_DATASET: 'raw'
-  _DELPHI_TABLE: 'fluview_ca_weekly'
-  _DELPHI_START_DATE: '2022-01-01'
 
 steps:
   - name: python:3.12-slim
@@ -17,7 +17,7 @@ steps:
       - |-
         set -euxo pipefail
         pip install --upgrade pip
-        pip install -r ingestion_pipeline_delphi/requirements.txt
+        pip install -r ingestion_pipeline_openmeteo/requirements.txt
 
   - name: gcr.io/cloud-builders/docker
     args:
@@ -25,25 +25,26 @@ steps:
       - '-t'
       - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO}/${_JOB_NAME}:${_IMAGE_TAG}'
       - '-f'
-      - ingestion_pipeline_delphi/dockerfile
-      - ingestion_pipeline_delphi
+      - ingestion_pipeline_openmeteo/Dockerfile
+      - ingestion_pipeline_openmeteo
 
   - name: gcr.io/cloud-builders/docker
     args:
       - push
       - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO}/${_JOB_NAME}:${_IMAGE_TAG}'
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
     entrypoint: bash
     args:
       - -c
       - |-
         set -exo pipefail
         COMMIT=${COMMIT_SHA:-local}
+        POINTS='37.34,-121.89,sj;38.58,-121.49,sac;32.72,-117.16,sd;34.05,-118.24,la;37.77,-122.42,sf;36.74,-119.78,fresno'
         gcloud run jobs deploy ${_JOB_NAME} \
           --image=${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO}/${_JOB_NAME}:${_IMAGE_TAG} \
           --region=${_REGION} \
-          --update-env-vars=^@^GOOGLE_CLOUD_PROJECT=${_PROJECT_ID}@BQ_DATASET=${_RAW_DATASET}@BQ_TABLE=${_DELPHI_TABLE}@BQ_LOCATION=${_REGION}@REGIONS=ca,state:ca@START_DATE=${_DELPHI_START_DATE}@REQUEST_SLEEP_SECONDS=0.3@MAX_RETRIES=5@CACHE_TTL_SECONDS=10800@MAX_WEEKS_PER_CHUNK=26@IMAGE_TAG=${_IMAGE_TAG}@COMMIT_SHA=$${COMMIT} \
+          --update-env-vars=^@^GOOGLE_CLOUD_PROJECT=${_PROJECT_ID}@BQ_DATASET=${_RAW_DATASET}@BQ_TABLE_POINTS=${_OPENMETEO_TABLE}@BQ_LOCATION=${_REGION}@POINTS=$${POINTS}@START_DATE=${_OPENMETEO_START_DATE}@TIMEZONE=America/Los_Angeles@REQUEST_SLEEP_SECONDS=0.6@MAX_RETRIES=5@CACHE_TTL_SECONDS=21600@REGION_LABEL=CA@IMAGE_TAG=${_IMAGE_TAG}@COMMIT_SHA=$${COMMIT} \
           --service-account=${_SERVICE_ACCOUNT} \
           --memory=2Gi \
           --max-retries=3 \
