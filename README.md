@@ -361,36 +361,5 @@ gcloud logging read 'resource.type="cloud_run_job" AND severity="ERROR"' --proje
 - **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Complete deployment guide with all commands and configurations
 - **[TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Common issues and solutions
 
-## Migration Notes
-This project was migrated from:
-- **Old Project**: `project-starfishprime-001` (wichywashy1@gmail.com)
-- **New Project**: `compact-marker-471008-m0` (grpprjkt@gmail.com)
-
-### Key Issues Resolved During Migration
-1. Corrupted `requirements.txt` files (OpenAQ and Delphi)
-2. Python bug in Delphi script (`log()` parameter conflict)
-3. BigQuery schema incompatibility (dropped and recreated tables)
-4. Missing Python unbuffered output flag
 
 See [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for detailed solutions.
-
-## Monitoring
-
-### Check Data Freshness
-```powershell
-# Query latest data in BigQuery
-bq query --use_legacy_sql=false 'SELECT MAX(date) as latest_date FROM `compact-marker-471008-m0.raw.openmeteo_daily_ca`'
-```
-
-### Check Scheduler Status
-```powershell
-gcloud scheduler jobs list --location=europe-west1 --project=compact-marker-471008-m0
-```
-
-### Check Job Executions
-```powershell
-gcloud run jobs executions list --job=ingest-openaq --project=compact-marker-471008-m0 --region=europe-north2 --limit=5
-```
-
-## Support
-For issues, see [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) or check Cloud Logging for detailed error messages.
