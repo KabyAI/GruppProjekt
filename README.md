@@ -278,7 +278,7 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ by the Data Engineering Team**
+**Built with ❤️ **
 
 ## Project Structure
 ```
