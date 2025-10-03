@@ -266,16 +266,3 @@ Invoke-RestMethod `
   -Method DELETE `
   -Headers @{Authorization="Bearer $token"}
 ```
-
-## Migration Notes
-
-### Key Issues Resolved During Migration
-1. **Corrupted requirements.txt files**: OpenAQ and Delphi had empty requirements.txt files despite showing content in editor. Fixed by recreating files with proper content.
-2. **Python bug in Delphi**: `log()` function parameter conflict - changed `message=` to `error_message=` in error logging.
-3. **BigQuery schema incompatibility**: Delphi table had `epiweek` field as `INTEGER` instead of `INT64`. Dropped and recreated table.
-4. **Missing `-u` flag**: Added Python unbuffered flag to OpenAQ Dockerfile for proper stdout logging.
-
-### Differences from Previous Project
-- Project ID: `project-starfishprime-001` → `compact-marker-471008-m0`
-- Account: `wichywashy1@gmail.com` → `grpprjkt@gmail.com`
-- All resource names and references updated accordingly
